@@ -127,6 +127,11 @@ func SettingsPost(ctx *context.Context) {
 
 			log.Trace("Repository name changed: %s/%s -> %s", ctx.Repo.Owner.Name, repo.Name, newRepoName)
 		}
+		if repo.IsPinned != form.Pinned {
+			//TODO validate if the number of pinned repo is still in the limit
+			repo.IsPinned = form.Pinned
+		}
+
 		// In case it's just a case change.
 		repo.Name = newRepoName
 		repo.LowerName = strings.ToLower(newRepoName)
