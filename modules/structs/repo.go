@@ -94,7 +94,6 @@ type Repository struct {
 	Internal                  bool             `json:"internal"`
 	MirrorInterval            string           `json:"mirror_interval"`
 	Pinned                    bool             `json:"pinned"`
-	PinnedOrder               int              `json:"pinned_order"`
 }
 
 // CreateRepoOption options when creating repository
@@ -184,8 +183,6 @@ type EditRepoOption struct {
 	MirrorInterval *string `json:"mirror_interval,omitempty"`
 	// pins the repo on the start of the user home page
 	Pinned *bool `json:"pinned"`
-	// defines in which order the repo will shown up at the pinned list
-	PinnedOrder *int `json:"pinned_order"`
 }
 
 // GenerateRepoOption options when creating repository using a template
