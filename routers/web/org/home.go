@@ -15,6 +15,7 @@ import (
 	"code.gitea.io/gitea/modules/markup"
 	"code.gitea.io/gitea/modules/markup/markdown"
 	"code.gitea.io/gitea/modules/setting"
+	"code.gitea.io/gitea/modules/util"
 )
 
 const (
@@ -109,6 +110,20 @@ func Home(ctx *context.Context) {
 		return
 	}
 
+	pinned_repos, _, err := models.SearchRepository(&models.SearchRepoOptions{
+		ListOptions: db.ListOptions{},
+		OwnerID:     org.ID,
+		OrderBy:     orderBy,
+		Private:     ctx.IsSigned,
+		Actor:       ctx.User,
+		IsPinned:    util.OptionalBoolTrue,
+	})
+
+	if err != nil {
+		ctx.ServerError("SearchRepository", err)
+		return
+	}
+
 	var opts = &models.FindOrgMembersOpts{
 		OrgID:       org.ID,
 		PublicOnly:  true,
@@ -138,6 +153,7 @@ func Home(ctx *context.Context) {
 
 	ctx.Data["Owner"] = org
 	ctx.Data["Repos"] = repos
+	ctx.Data["PinnedRepos"] = pinned_repos
 	ctx.Data["Total"] = count
 	ctx.Data["MembersTotal"] = membersCount
 	ctx.Data["Members"] = members
