@@ -9,7 +9,7 @@ import (
 )
 
 func addPinnedColumn(x *xorm.Engine) error {
-	// ProjectIssue saves relation from issue to a project
+	// Boolean to pin a repo in the home page
 	type Repository struct {
 		IsPinned bool `xorm:"NOT NULL DEFAULT FALSE"`
 	}
