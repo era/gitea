@@ -113,7 +113,7 @@ func Home(ctx *context.Context) {
 	pinned_repos, _, err := models.SearchRepository(&models.SearchRepoOptions{
 		ListOptions: db.ListOptions{},
 		OwnerID:     org.ID,
-		OrderBy:     orderBy,
+		OrderBy:     db.SearchOrderByRecentUpdated,
 		Private:     ctx.IsSigned,
 		Actor:       ctx.User,
 		IsPinned:    util.OptionalBoolTrue,
