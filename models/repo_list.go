@@ -292,7 +292,7 @@ func SearchRepositoryCondition(opts *SearchRepoOptions) builder.Cond {
 	}
 
 	if opts.IsPinned != util.OptionalBoolNone {
-		cond.And(builder.Eq{"is_pinned": opts.IsPinned == util.OptionalBoolTrue})
+		cond = cond.And(builder.Eq{"is_pinned": opts.IsPinned == util.OptionalBoolTrue})
 	}
 
 	switch opts.HasMilestones {
