@@ -326,7 +326,6 @@ func Profile(ctx *context.Context) {
 		total = int(count)
 	default:
 		// Only doing it for the first page where the pinned repos are
-		//TODO: Refactor to a proper function, shouldn't be here
 		if page == 1 {
 
 			pinnedRepos, pinnedReposCount, err = models.SearchRepository(&models.SearchRepoOptions{
