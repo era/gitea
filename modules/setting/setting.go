@@ -241,6 +241,7 @@ var (
 		} `ini:"ui.admin"`
 		User struct {
 			RepoPagingNum int
+			PinnedRepoNum int
 		} `ini:"ui.user"`
 		Meta struct {
 			Author      string
@@ -298,8 +299,10 @@ var (
 		},
 		User: struct {
 			RepoPagingNum int
+			PinnedRepoNum int
 		}{
 			RepoPagingNum: 15,
+			PinnedRepoNum: 5,
 		},
 		Meta: struct {
 			Author      string

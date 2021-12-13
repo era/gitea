@@ -128,7 +128,24 @@ func SettingsPost(ctx *context.Context) {
 			log.Trace("Repository name changed: %s/%s -> %s", ctx.Repo.Owner.Name, repo.Name, newRepoName)
 		}
 		if repo.IsPinned != form.Pinned {
-			//TODO validate if the number of pinned repo is still in the limit
+			_, total, err := models.SearchRepository(&models.SearchRepoOptions{
+				ListOptions: db.ListOptions{},
+				OwnerID:     ctx.Repo.Repository.OwnerID,
+				OrderBy:     db.SearchOrderByRecentUpdated,
+				Private:     ctx.IsSigned,
+				Actor:       ctx.User,
+				IsPinned:    util.OptionalBoolTrue,
+			})
+
+			if err != nil {
+				ctx.ServerError("PinRespository", err)
+			}
+
+			if setting.UI.User.RepoPagingNum == int(total) {
+				ctx.RenderWithErr(ctx.Tr("repo.form.max_number_of_pinned_repos"), tplSettingsOptions, form)
+				return
+			}
+
 			repo.IsPinned = form.Pinned
 		}
 
