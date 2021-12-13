@@ -351,7 +351,7 @@ func Profile(ctx *context.Context) {
 
 			repos, count, err = models.SearchRepository(&models.SearchRepoOptions{
 				ListOptions: db.ListOptions{
-					PageSize: setting.UI.User.RepoPagingNum - int(pinnedReposCount),
+					PageSize: setting.UI.User.RepoPagingNum,
 					Page:     page,
 				},
 				Actor:              ctx.User,
