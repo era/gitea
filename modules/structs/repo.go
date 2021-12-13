@@ -93,6 +93,7 @@ type Repository struct {
 	AvatarURL                 string           `json:"avatar_url"`
 	Internal                  bool             `json:"internal"`
 	MirrorInterval            string           `json:"mirror_interval"`
+	Pinned                    bool             `json:"pinned"`
 }
 
 // CreateRepoOption options when creating repository
@@ -180,6 +181,8 @@ type EditRepoOption struct {
 	Archived *bool `json:"archived,omitempty"`
 	// set to a string like `8h30m0s` to set the mirror interval time
 	MirrorInterval *string `json:"mirror_interval,omitempty"`
+	// pins the repo on the start of the user home page
+	Pinned *bool `json:"pinned"`
 }
 
 // GenerateRepoOption options when creating repository using a template

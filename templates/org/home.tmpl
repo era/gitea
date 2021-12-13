@@ -29,6 +29,30 @@
 			</div>
 
 			<div class="ui five wide column">
+
+				<div class="ui top attached header df">
+						<strong class="f1">{{.i18n.Tr "org.repo.pinned"}}</strong>
+				</div>
+				<div class="ui attached table segment teams pinned_repo">
+					{{range .PinnedRepos}}
+						<div class="item">
+							<a class="name" href="{{.Link}}">
+								<strong>{{if or $.PageIsExplore $.PageIsProfileStarList }}{{if .Owner}}{{.Owner.Name}} / {{end}}{{end}}{{.Name}}</strong>
+							</a>
+							<div class="description">
+								{{if .DescriptionHTML}}<p>{{.DescriptionHTML}}</p>{{end}}
+								{{if .Topics }}
+									<div class="ui tags">
+									{{range .Topics}}
+										{{if ne . "" }}<a href="{{AppSubUrl}}/explore/repos?q={{.}}&topic=1"><div class="ui small label topic">{{.}}</div></a>{{end}}
+									{{end}}
+									</div>
+								{{end}}
+							</div>
+						</div>
+					{{end}}
+				</div>
+
 				<h4 class="ui top attached header df">
 					<strong class="f1">{{.i18n.Tr "org.people"}}</strong>
 					{{if .IsOrganizationMember}}

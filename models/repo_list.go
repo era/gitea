@@ -133,6 +133,10 @@ type SearchRepoOptions struct {
 	// True -> include just archived
 	// False -> include just non-archived
 	Archived util.OptionalBool
+	// None -> include pinned AND non-pinned
+	// True -> include just pinned
+	// False -> include just non-pinned
+	IsPinned util.OptionalBool
 	// only search topic name
 	TopicOnly bool
 	// include description in keyword search
@@ -285,6 +289,10 @@ func SearchRepositoryCondition(opts *SearchRepoOptions) builder.Cond {
 
 	if opts.Archived != util.OptionalBoolNone {
 		cond = cond.And(builder.Eq{"is_archived": opts.Archived == util.OptionalBoolTrue})
+	}
+
+	if opts.IsPinned != util.OptionalBoolNone {
+		cond = cond.And(builder.Eq{"is_pinned": opts.IsPinned == util.OptionalBoolTrue})
 	}
 
 	switch opts.HasMilestones {

@@ -197,10 +197,12 @@ func Profile(ctx *context.Context) {
 	topicOnly := ctx.FormBool("topic")
 
 	var (
-		repos   []*repo_model.Repository
-		count   int64
-		total   int
-		orderBy db.SearchOrderBy
+		pinnedRepos      []*repo_model.Repository
+		repos            []*repo_model.Repository
+		count            int64
+		pinnedReposCount int64
+		total            int
+		orderBy          db.SearchOrderBy
 	)
 
 	ctx.Data["SortType"] = ctx.FormString("sort")
@@ -232,6 +234,7 @@ func Profile(ctx *context.Context) {
 
 	keyword := ctx.FormTrim("q")
 	ctx.Data["Keyword"] = keyword
+	pinnedRepos = nil
 	switch tab {
 	case "followers":
 		items, err := user_model.GetUserFollowers(ctxUser, db.ListOptions{
@@ -322,27 +325,75 @@ func Profile(ctx *context.Context) {
 
 		total = int(count)
 	default:
-		repos, count, err = models.SearchRepository(&models.SearchRepoOptions{
-			ListOptions: db.ListOptions{
-				PageSize: setting.UI.User.RepoPagingNum,
-				Page:     page,
-			},
-			Actor:              ctx.User,
-			Keyword:            keyword,
-			OwnerID:            ctxUser.ID,
-			OrderBy:            orderBy,
-			Private:            ctx.IsSigned,
-			Collaborate:        util.OptionalBoolFalse,
-			TopicOnly:          topicOnly,
-			IncludeDescription: setting.UI.SearchRepoDescription,
-		})
-		if err != nil {
-			ctx.ServerError("SearchRepository", err)
-			return
+		// Only doing it for the first page where the pinned repos are
+		if page == 1 {
+
+			pinnedRepos, pinnedReposCount, err = models.SearchRepository(&models.SearchRepoOptions{
+				ListOptions: db.ListOptions{
+					PageSize: setting.UI.User.RepoPagingNum,
+					Page:     page,
+				},
+				Actor:              ctx.User,
+				Keyword:            keyword,
+				OwnerID:            ctxUser.ID,
+				OrderBy:            orderBy,
+				Private:            ctx.IsSigned,
+				Collaborate:        util.OptionalBoolFalse,
+				TopicOnly:          topicOnly,
+				IncludeDescription: setting.UI.SearchRepoDescription,
+				IsPinned:           util.OptionalBoolTrue,
+			})
+			if err != nil {
+				ctx.ServerError("SearchRepository", err)
+				return
+			}
+
+			repos, count, err = models.SearchRepository(&models.SearchRepoOptions{
+				ListOptions: db.ListOptions{
+					PageSize: setting.UI.User.RepoPagingNum,
+					Page:     page,
+				},
+				Actor:              ctx.User,
+				Keyword:            keyword,
+				OwnerID:            ctxUser.ID,
+				OrderBy:            orderBy,
+				Private:            ctx.IsSigned,
+				Collaborate:        util.OptionalBoolFalse,
+				TopicOnly:          topicOnly,
+				IncludeDescription: setting.UI.SearchRepoDescription,
+				IsPinned:           util.OptionalBoolFalse,
+			})
+			if err != nil {
+				ctx.ServerError("SearchRepository", err)
+				return
+			}
+
+			total = int(count) + int(pinnedReposCount)
+
+		} else {
+			repos, count, err = models.SearchRepository(&models.SearchRepoOptions{
+				ListOptions: db.ListOptions{
+					PageSize: setting.UI.User.RepoPagingNum,
+					Page:     page,
+				},
+				Actor:              ctx.User,
+				Keyword:            keyword,
+				OwnerID:            ctxUser.ID,
+				OrderBy:            orderBy,
+				Private:            ctx.IsSigned,
+				Collaborate:        util.OptionalBoolFalse,
+				TopicOnly:          topicOnly,
+				IncludeDescription: setting.UI.SearchRepoDescription,
+			})
+			if err != nil {
+				ctx.ServerError("SearchRepository", err)
+				return
+			}
 		}
 
 		total = int(count)
 	}
+	ctx.Data["PinnedRepos"] = pinnedRepos
 	ctx.Data["Repos"] = repos
 	ctx.Data["Total"] = total
 
